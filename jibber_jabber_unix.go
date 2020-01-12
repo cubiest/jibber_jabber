@@ -8,57 +8,60 @@ import (
 	"strings"
 )
 
-func getLangFromEnv() (locale string) {
-	envs := []string{"LC_MESSAGES", "LC_ALL", "LANG"}
-
-	for _, env := range envs {
-		locale = os.Getenv(env)
+func getLangFromEnv() string {
+	for _, env := range []string{"LC_MESSAGES", "LC_ALL", "LANG"} {
+		locale := os.Getenv(env)
 		if len(locale) > 0 {
-			return
+			return locale
 		}
 	}
-	return
+	return ""
 }
 
-func getUnixLocale() (locale string, err error) {
-	locale = getLangFromEnv()
+func getUnixLocale() (string, error) {
+	locale := getLangFromEnv()
 	if len(locale) <= 0 {
-		err = errors.New(COULD_NOT_DETECT_PACKAGE_ERROR_MESSAGE)
+		return "", errors.New(COULD_NOT_DETECT_PACKAGE_ERROR_MESSAGE)
 	}
-	return
+	return locale, nil
 }
 
 // DetectIETF detects and returns the IETF language tag of UNIX systems, like Linux and macOS.
 // If a territory is defined, the returned value will be in the format of `[language]-[territory]`,
 // e.g. `en-GB`.
-func DetectIETF() (locale string, err error) {
+func DetectIETF() (string, error) {
 	locale, err := getUnixLocale()
-	if err == nil {
-		language, territory := splitLocale(locale)
-		locale = language
-		if len(territory) > 0 {
-			locale = strings.Join([]string{language, territory}, "-")
-		}
+	if err != nil {
+		return "", err
 	}
-	return
+
+	language, territory := splitLocale(locale)
+	locale = language
+	if len(territory) > 0 {
+		locale = strings.Join([]string{language, territory}, "-")
+	}
+
+	return locale, nil
 }
 
 // DetectLanguage detects the IETF language tag of UNIX systems, like Linux and macOS,
 // and returns the first half of the string, before the `_`.
-func DetectLanguage() (language string, err error) {
+func DetectLanguage() (string, error) {
 	locale, err := getUnixLocale()
-	if err == nil {
-		language, _ = splitLocale(locale)
+	if err != nil {
+		return "", err
 	}
-	return
+	language, _ := splitLocale(locale)
+	return language, nil
 }
 
 // DetectTerritory detects the IETF language tag of UNIX systems, like Linux and macOS,
 // and returns the second half of the string, after the `_`.
-func DetectTerritory() (territory string, err error) {
+func DetectTerritory() (string, error) {
 	locale, err := getUnixLocale()
-	if err == nil {
-		_, territory = splitLocale(locale)
+	if err != nil {
+		return "", nil
 	}
-	return
+	_, territory := splitLocale(locale)
+	return territory, nil
 }

@@ -25,26 +25,23 @@ var SUPPORTED_LOCALES = map[uintptr]string{
 	0x0404: "zh-TW",
 }
 
-func getWindowsLocaleFrom(sysCall string) (locale string, err error) {
+func getWindowsLocaleFrom(sysCall string) (string, error) {
 	buffer := make([]uint16, LOCALE_NAME_MAX_LENGTH)
 
 	dll := syscall.MustLoadDLL("kernel32")
 	proc := dll.MustFindProc(sysCall)
 	r, _, dllError := proc.Call(uintptr(unsafe.Pointer(&buffer[0])), uintptr(LOCALE_NAME_MAX_LENGTH))
 	if r == 0 {
-		err = errors.New(COULD_NOT_DETECT_PACKAGE_ERROR_MESSAGE + ":\n" + dllError.Error())
-		return
+		return "", errors.New(COULD_NOT_DETECT_PACKAGE_ERROR_MESSAGE + ":\n" + dllError.Error())
 	}
 
-	locale = syscall.UTF16ToString(buffer)
-
-	return
+	return syscall.UTF16ToString(buffer), nil
 }
 
 func getAllWindowsLocaleFrom(sysCall string) (string, error) {
 	dll, err := syscall.LoadDLL("kernel32")
 	if err != nil {
-		return "", errors.New("Could not find kernel32 dll")
+		return "", errors.New("could not find kernel32 dll: " + err.Error())
 	}
 
 	proc, err := dll.FindProc(sysCall)
@@ -60,10 +57,10 @@ func getAllWindowsLocaleFrom(sysCall string) (string, error) {
 	return SUPPORTED_LOCALES[locale], nil
 }
 
-func getWindowsLocale() (locale string, err error) {
+func getWindowsLocale() (string, error) {
 	dll, err := syscall.LoadDLL("kernel32")
 	if err != nil {
-		return "", errors.New("Could not find kernel32 dll")
+		return "", errors.New("could not find kernel32 dll: " + err.Error())
 	}
 
 	proc, err := dll.FindProc("GetVersion")
@@ -73,48 +70,47 @@ func getWindowsLocale() (locale string, err error) {
 
 	v, _, _ := proc.Call()
 	windowsVersion := byte(v)
-	isVistaOrGreater := (windowsVersion >= 6)
 
-	if isVistaOrGreater {
+	// is of version Windows Vista or greater
+	if windowsVersion >= 6 {
 		locale, err = getWindowsLocaleFrom("GetUserDefaultLocaleName")
 		if err != nil {
 			locale, err = getWindowsLocaleFrom("GetSystemDefaultLocaleName")
 		}
-	} else if !isVistaOrGreater {
-		locale, err = getAllWindowsLocaleFrom("GetUserDefaultLCID")
-		if err != nil {
-			locale, err = getAllWindowsLocaleFrom("GetSystemDefaultLCID")
-		}
-	} else {
-		panic(v)
+		return locale, err
 	}
-	return
+
+	// prior Windows Vista
+	locale, err = getAllWindowsLocaleFrom("GetUserDefaultLCID")
+	if err != nil {
+		locale, err = getAllWindowsLocaleFrom("GetSystemDefaultLCID")
+	}
+	return locale, err
 }
 
 // DetectIETF detects and returns the IETF language tag of Windows.
-func DetectIETF() (locale string, err error) {
-	locale, err = getWindowsLocale()
-	return
+func DetectIETF() (string, error) {
+	return getWindowsLocale()
 }
 
 // DetectLanguage detects the IETF language tag of Windows
 // and returns the first half of the string, before the `_`.
-func DetectLanguage() (language string, err error) {
+func DetectLanguage() (string, error) {
 	locale, err := getWindowsLocale()
-	if err == nil {
-		language, _ = splitLocale(locale)
+	if err != nil {
+		return "", err
 	}
-
-	return
+	language, _ := splitLocale(locale)
+	return language, nil
 }
 
 // DetectTerritory detects the IETF language tag of Windows
 // and returns the second half of the string, after the `_`.
-func DetectTerritory() (territory string, err error) {
+func DetectTerritory() (string, error) {
 	locale, err := getWindowsLocale()
-	if err == nil {
-		_, territory = splitLocale(locale)
+	if err != nil {
+		return "", nil
 	}
-
-	return
+	_, territory := splitLocale(locale)
+	return territory, nil
 }
