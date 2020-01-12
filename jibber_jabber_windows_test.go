@@ -5,7 +5,7 @@ package jibber_jabber_test
 import (
 	"regexp"
 
-	. "github.com/cloudfoundry/jibber_jabber"
+	. "github.com/cubiest/jibber_jabber"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
