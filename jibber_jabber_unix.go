@@ -28,6 +28,9 @@ func getUnixLocale() (locale string, err error) {
 	return
 }
 
+// DetectIETF detects and returns the IETF language tag of UNIX systems, like Linux and macOS.
+// If a territory is defined, the returned value will be in the format of `[language]-[territory]`,
+// e.g. `en-GB`.
 func DetectIETF() (locale string, err error) {
 	locale, err := getUnixLocale()
 	if err == nil {
@@ -40,6 +43,8 @@ func DetectIETF() (locale string, err error) {
 	return
 }
 
+// DetectLanguage detects the IETF language tag of UNIX systems, like Linux and macOS,
+// and returns the first half of the string, before the `_`.
 func DetectLanguage() (language string, err error) {
 	locale, err := getUnixLocale()
 	if err == nil {
@@ -48,6 +53,8 @@ func DetectLanguage() (language string, err error) {
 	return
 }
 
+// DetectTerritory detects the IETF language tag of UNIX systems, like Linux and macOS,
+// and returns the second half of the string, after the `_`.
 func DetectTerritory() (territory string, err error) {
 	locale, err := getUnixLocale()
 	if err == nil {

@@ -90,24 +90,30 @@ func getWindowsLocale() (locale string, err error) {
 	}
 	return
 }
+
+// DetectIETF detects and returns the IETF language tag of Windows.
 func DetectIETF() (locale string, err error) {
 	locale, err = getWindowsLocale()
 	return
 }
 
+// DetectLanguage detects the IETF language tag of Windows
+// and returns the first half of the string, before the `_`.
 func DetectLanguage() (language string, err error) {
-	windows_locale, err := getWindowsLocale()
+	locale, err := getWindowsLocale()
 	if err == nil {
-		language, _ = splitLocale(windows_locale)
+		language, _ = splitLocale(locale)
 	}
 
 	return
 }
 
+// DetectTerritory detects the IETF language tag of Windows
+// and returns the second half of the string, after the `_`.
 func DetectTerritory() (territory string, err error) {
-	windows_locale, err := getWindowsLocale()
+	locale, err := getWindowsLocale()
 	if err == nil {
-		_, territory = splitLocale(windows_locale)
+		_, territory = splitLocale(locale)
 	}
 
 	return
