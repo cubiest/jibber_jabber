@@ -9,9 +9,13 @@ import (
 )
 
 func getLangFromEnv() (locale string) {
-	locale = os.Getenv("LC_ALL")
-	if locale == "" {
-		locale = os.Getenv("LANG")
+	envs := []string{"LC_MESSAGES", "LC_ALL", "LANG"}
+
+	for _, env := range envs {
+		locale = os.Getenv(env)
+		if len(locale) > 0 {
+			return
+		}
 	}
 	return
 }
@@ -21,7 +25,6 @@ func getUnixLocale() (unix_locale string, err error) {
 	if unix_locale == "" {
 		err = errors.New(COULD_NOT_DETECT_PACKAGE_ERROR_MESSAGE)
 	}
-
 	return
 }
 
@@ -34,7 +37,6 @@ func DetectIETF() (locale string, err error) {
 			locale = strings.Join([]string{language, territory}, "-")
 		}
 	}
-
 	return
 }
 
@@ -43,7 +45,6 @@ func DetectLanguage() (language string, err error) {
 	if err == nil {
 		language, _ = splitLocale(unix_locale)
 	}
-
 	return
 }
 
@@ -52,6 +53,5 @@ func DetectTerritory() (territory string, err error) {
 	if err == nil {
 		_, territory = splitLocale(unix_locale)
 	}
-
 	return
 }
