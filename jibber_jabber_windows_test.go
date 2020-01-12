@@ -1,11 +1,11 @@
 // +build windows
 
-package jibber_jabber_test
+package jibberjabber_test
 
 import (
 	"regexp"
 
-	. "github.com/cubiest/jibber_jabber"
+	. "github.com/cubiest/jibberjabber"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

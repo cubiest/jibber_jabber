@@ -1,4 +1,4 @@
-package jibber_jabber
+package jibberjabber
 
 import (
 	"strings"

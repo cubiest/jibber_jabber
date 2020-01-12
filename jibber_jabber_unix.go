@@ -1,6 +1,6 @@
 // +build darwin freebsd linux netbsd openbsd
 
-package jibber_jabber
+package jibberjabber
 
 import (
 	"errors"

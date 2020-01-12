@@ -1,4 +1,4 @@
-# Jibber Jabber [![Build Status](https://travis-ci.org/cubiest/jibber_jabber.svg?branch=master)](https://travis-ci.org/cubiest/jibber_jabber)
+# Jibber Jabber [![Build Status](https://travis-ci.org/cubiest/jibberjabber.svg?branch=master)](https://travis-ci.org/cubiest/jibberjabber)
 Jibber Jabber is a GoLang Library that can be used to detect an operating system's current language.
 
 ### OS Support
@@ -11,14 +11,14 @@ Windows via [GetUserDefaultLocaleName](http://msdn.microsoft.com/en-us/library/w
 Add the following line to your go `import`:
 
 ```
-	"github.com/cubiest/jibber_jabber"
+	"github.com/cubiest/jibberjabber"
 ```
 
 ### DetectIETF
 `DetectIETF` will return the current locale as a string. The format of the locale will be the [ISO 639](http://en.wikipedia.org/wiki/ISO_639) two-letter language code, a DASH, then an [ISO 3166](http://en.wikipedia.org/wiki/ISO_3166-1) two-letter country code.
 
 ```
-	userLocale, err := jibber_jabber.DetectIETF()
+	userLocale, err := jibberjabber.DetectIETF()
 	println("Locale:", userLocale)
 ```
 
@@ -26,7 +26,7 @@ Add the following line to your go `import`:
 `DetectLanguage` will return the current languge as a string. The format will be the [ISO 639](http://en.wikipedia.org/wiki/ISO_639) two-letter language code.
 
 ```
-	userLanguage, err := jibber_jabber.DetectLanguage()
+	userLanguage, err := jibberjabber.DetectLanguage()
 	println("Language:", userLanguage)
 ```
 
@@ -34,7 +34,7 @@ Add the following line to your go `import`:
 `DetectTerritory` will return the current locale territory as a string. The format will be the [ISO 3166](http://en.wikipedia.org/wiki/ISO_3166-1) two-letter country code.
 
 ```
-	localeTerritory, err := jibber_jabber.DetectTerritory()
+	localeTerritory, err := jibberjabber.DetectTerritory()
 	println("Territory:", localeTerritory)
 ```
 
