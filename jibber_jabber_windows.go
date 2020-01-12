@@ -73,7 +73,7 @@ func getWindowsLocale() (string, error) {
 
 	// is of version Windows Vista or greater
 	if windowsVersion >= 6 {
-		locale, err = getWindowsLocaleFrom("GetUserDefaultLocaleName")
+		locale, err := getWindowsLocaleFrom("GetUserDefaultLocaleName")
 		if err != nil {
 			locale, err = getWindowsLocaleFrom("GetSystemDefaultLocaleName")
 		}
@@ -81,7 +81,7 @@ func getWindowsLocale() (string, error) {
 	}
 
 	// prior Windows Vista
-	locale, err = getAllWindowsLocaleFrom("GetUserDefaultLCID")
+	locale, err := getAllWindowsLocaleFrom("GetUserDefaultLCID")
 	if err != nil {
 		locale, err = getAllWindowsLocaleFrom("GetSystemDefaultLCID")
 	}
