@@ -41,6 +41,18 @@ var _ = Describe("Windows", func() {
 		})
 	})
 
+	Describe("#DetectLanguageTag", func() {
+		It("detects correct Language Tag", func() {
+			result, _ := DetectLanguageTag()
+			base, _ := result.Base()
+			matched, _ := regexp.MatchString(LANGUAGE_REGEXP, base.String())
+			Ω(matched).Should(BeTrue())
+			region, _ := result.Region()
+			matched, _ := regexp.MatchString(TERRITORY_REGEXP, region.String())
+			Ω(matched).Should(BeTrue())
+		})
+	})
+
 	Describe("#DetectTerritory", func() {
 		It("detects correct Territory", func() {
 			territory, _ := DetectTerritory()

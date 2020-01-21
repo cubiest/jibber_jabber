@@ -11,6 +11,11 @@ import (
 	. "github.com/onsi/gomega"
 )
 
+type parsedTag struct {
+	langID uint16
+	region uint16
+}
+
 var _ = Describe("Unix", func() {
 	AfterEach(func() {
 		os.Setenv("LC_MESSAGES", "")
@@ -81,6 +86,43 @@ var _ = Describe("Unix", func() {
 			It("should return an error if it cannot detect a language", func() {
 				os.Setenv("LANG", "")
 				_, err := DetectLanguage()
+				Ω(err.Error()).Should(Equal(COULD_NOT_DETECT_PACKAGE_ERROR_MESSAGE))
+			})
+		})
+	})
+
+	Describe("#DetectLanguageTag", func() {
+		Context("Returns encoded language tag", func() {
+			It("should return language tag corresponding to the language set to LC_MESSAGES", func() {
+				os.Setenv("LC_MESSAGES", "fr_FR.UTF-8")
+				result, _ := DetectLanguageTag()
+				base, _ := result.Base()
+				Ω(base.String()).Should(Equal("fr"))
+				region, _ := result.Region()
+				Ω(region.String()).Should(Equal("FR"))
+			})
+
+			It("should return language tag corresponding to the language set to LC_ALL if LC_MESSAGES isn't set", func() {
+				os.Setenv("LC_ALL", "fr_FR.UTF-8")
+				result, _ := DetectLanguageTag()
+				base, _ := result.Base()
+				Ω(base.String()).Should(Equal("fr"))
+				region, _ := result.Region()
+				Ω(region.String()).Should(Equal("FR"))
+			})
+
+			It("should return language tag corresponding to the language set to LANG if LC_ALL isn't set", func() {
+				os.Setenv("LANG", "fr_FR.UTF-8")
+				result, _ := DetectLanguageTag()
+				base, _ := result.Base()
+				Ω(base.String()).Should(Equal("fr"))
+				region, _ := result.Region()
+				Ω(region.String()).Should(Equal("FR"))
+			})
+
+			It("should return an error if it cannot detect and parse a language tag", func() {
+				os.Setenv("LANG", "")
+				_, err := DetectLanguageTag()
 				Ω(err.Error()).Should(Equal(COULD_NOT_DETECT_PACKAGE_ERROR_MESSAGE))
 			})
 		})

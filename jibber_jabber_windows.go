@@ -105,6 +105,16 @@ func DetectLanguage() (string, error) {
 	return language, nil
 }
 
+// DetectLanguageTag detects the IETF language tag of Windows
+// and returns a fitting language tag.
+func DetectLanguageTag() (language.Tag, error) {
+	locale, err := getWindowsLocale()
+	if err != nil {
+		return language.Und, err
+	}
+	return language.Parse(locale)
+}
+
 // DetectTerritory detects the IETF language tag of Windows
 // and returns the second half of the string, after the `_`.
 func DetectTerritory() (string, error) {

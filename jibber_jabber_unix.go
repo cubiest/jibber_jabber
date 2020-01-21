@@ -6,6 +6,8 @@ import (
 	"errors"
 	"os"
 	"strings"
+
+	"golang.org/x/text/language"
 )
 
 func getLangFromEnv() string {
@@ -53,6 +55,16 @@ func DetectLanguage() (string, error) {
 	}
 	language, _ := splitLocale(locale)
 	return language, nil
+}
+
+// DetectLanguageTag detects the IETF language tag of UNIX systems, like Linux and macOS,
+// and returns a fitting language tag.
+func DetectLanguageTag() (language.Tag, error) {
+	locale, err := getUnixLocale()
+	if err != nil {
+		return language.Und, err
+	}
+	return language.Parse(locale)
 }
 
 // DetectTerritory detects the IETF language tag of UNIX systems, like Linux and macOS,
