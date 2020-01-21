@@ -60,7 +60,7 @@ func DetectLanguage() (string, error) {
 func DetectTerritory() (string, error) {
 	locale, err := getUnixLocale()
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 	_, territory := splitLocale(locale)
 	return territory, nil
