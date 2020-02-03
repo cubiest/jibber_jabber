@@ -29,8 +29,16 @@ var SUPPORTED_LOCALES = map[uintptr]string{
 func getWindowsLocaleFrom(sysCall string) (string, error) {
 	buffer := make([]uint16, LOCALE_NAME_MAX_LENGTH)
 
-	dll := windows.MustLoadDLL("kernel32")
-	proc := dll.MustFindProc(sysCall)
+	dll, err := windows.LoadDLL("kernel32")
+	if err != nil {
+		return "", errors.New("could not find kernel32 dll: " + err.Error())
+	}
+
+	proc, err := dll.FindProc(sysCall)
+	if err != nil {
+		return "", err
+	}
+
 	r, _, dllError := proc.Call(uintptr(unsafe.Pointer(&buffer[0])), uintptr(LOCALE_NAME_MAX_LENGTH))
 	if r == 0 {
 		return "", errors.New(COULD_NOT_DETECT_PACKAGE_ERROR_MESSAGE + ":\n" + dllError.Error())
