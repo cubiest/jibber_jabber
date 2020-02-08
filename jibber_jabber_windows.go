@@ -7,6 +7,7 @@ import (
 	"unsafe"
 
 	"golang.org/x/sys/windows"
+	"golang.org/x/text/language"
 )
 
 // TODO: read LOCALE_NAME_MAX_LENGTH from Windows, instead of hard-coding '85'
