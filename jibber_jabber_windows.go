@@ -2,6 +2,11 @@
 
 package jibberjabber
 
+/*
+#include <windows.h>
+*/
+
+import "C"
 import (
 	"errors"
 	"unsafe"
@@ -10,11 +15,10 @@ import (
 	"golang.org/x/text/language"
 )
 
-// TODO: read LOCALE_NAME_MAX_LENGTH from Windows, instead of hard-coding '85'
-const LOCALE_NAME_MAX_LENGTH uint32 = 85
-
 func getWindowsLocaleFrom(sysCall string) (string, error) {
-	buffer := make([]uint16, LOCALE_NAME_MAX_LENGTH)
+	length := int(C.LOCALE_NAME_MAX_LENGTH)
+
+	buffer := make([]uint16, length)
 
 	dll, err := windows.LoadDLL("kernel32")
 	if err != nil {
@@ -26,7 +30,7 @@ func getWindowsLocaleFrom(sysCall string) (string, error) {
 		return "", err
 	}
 
-	r, _, dllError := proc.Call(uintptr(unsafe.Pointer(&buffer[0])), uintptr(LOCALE_NAME_MAX_LENGTH))
+	r, _, dllError := proc.Call(uintptr(unsafe.Pointer(&buffer[0])), uintptr(C.LOCALE_NAME_MAX_LENGTH))
 	if r == 0 {
 		return "", errors.New(COULD_NOT_DETECT_PACKAGE_ERROR_MESSAGE + ":\n" + dllError.Error())
 	}
