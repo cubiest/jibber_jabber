@@ -18,13 +18,14 @@ Add the following line to your go `import`:
 ### DetectIETF
 `DetectIETF` will return the current locale as a string. The format of the locale will be the [ISO 639](http://en.wikipedia.org/wiki/ISO_639) two-letter language code, a DASH, then an [ISO 3166](http://en.wikipedia.org/wiki/ISO_3166-1) two-letter country code.
 
+**Example:**
 ```golang
 	userLocale, err := jibberjabber.DetectIETF()
 	println("Locale:", userLocale)
 ```
 
 ### DetectLanguage
-`DetectLanguage` will return the current languge as a string. The format will be the [ISO 639](http://en.wikipedia.org/wiki/ISO_639) two-letter language code.
+`DetectLanguage` will return the current language as a string. The format will be the [ISO 639](http://en.wikipedia.org/wiki/ISO_639) two-letter language code.
 
 also import the following packages for parsing the returned locale
 ```golang
@@ -33,6 +34,7 @@ also import the following packages for parsing the returned locale
 
 ```
 
+**Example:**
 ```golang
 	userLanguage, err := jibberjabber.DetectLanguage()
 	println("Language:", userLanguage)
@@ -41,9 +43,20 @@ also import the following packages for parsing the returned locale
 	
 ```
 
+### DetectLanguageTag
+`DetectLanguageTag` will return the current language as a language tag as specified by `"golang.org/x/text/language"`.
+
+**Example:**
+```golang
+	languageTag, parseErr := jibberjabber.DetectLanguageTag()
+	println("Language:", display.Self.Name(languageTag))
+	
+```
+
 ### DetectTerritory
 `DetectTerritory` will return the current locale territory as a string. The format will be the [ISO 3166](http://en.wikipedia.org/wiki/ISO_3166-1) two-letter country code.
 
+**Example:**
 ```golang
 	localeTerritory, err := jibberjabber.DetectTerritory()
 	println("Territory:", localeTerritory)
