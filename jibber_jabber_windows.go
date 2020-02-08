@@ -104,22 +104,9 @@ func getWindowsLocale() (string, error) {
 		return "", err
 	}
 
-	v, _, _ := proc.Call()
-	windowsVersion := byte(v)
-
-	// is of version Windows Vista or greater
-	if windowsVersion >= 6 {
-		locale, err := getWindowsLocaleFrom("GetUserDefaultLocaleName")
-		if err != nil {
-			locale, err = getWindowsLocaleFrom("GetSystemDefaultLocaleName")
-		}
-		return locale, err
-	}
-
-	// prior Windows Vista
-	locale, err := getAllWindowsLocaleFrom("GetUserDefaultLCID")
+	locale, err := getWindowsLocaleFrom("GetUserDefaultLocaleName")
 	if err != nil {
-		locale, err = getAllWindowsLocaleFrom("GetSystemDefaultLCID")
+		locale, err = getWindowsLocaleFrom("GetSystemDefaultLocaleName")
 	}
 	return locale, err
 }
