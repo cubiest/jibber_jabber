@@ -48,7 +48,7 @@ var _ = Describe("Windows", func() {
 			matched, _ := regexp.MatchString(LANGUAGE_REGEXP, base.String())
 			Ω(matched).Should(BeTrue())
 			region, _ := result.Region()
-			matched, _ := regexp.MatchString(TERRITORY_REGEXP, region.String())
+			matched, _ = regexp.MatchString(TERRITORY_REGEXP, region.String())
 			Ω(matched).Should(BeTrue())
 		})
 	})
