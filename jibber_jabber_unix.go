@@ -3,7 +3,6 @@
 package jibberjabber
 
 import (
-	"errors"
 	"os"
 	"strings"
 
@@ -23,7 +22,7 @@ func getLangFromEnv() string {
 func getUnixLocale() (string, error) {
 	locale := getLangFromEnv()
 	if len(locale) <= 0 {
-		return "", errors.New(COULD_NOT_DETECT_PACKAGE_ERROR_MESSAGE)
+		return "", ErrLangDetectFail
 	}
 	return locale, nil
 }

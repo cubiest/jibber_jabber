@@ -28,7 +28,7 @@ func getWindowsLocaleFrom(sysCall string) (string, error) {
 
 	r, _, dllError := proc.Call(uintptr(unsafe.Pointer(&buffer[0])), uintptr(LOCALE_NAME_MAX_LENGTH))
 	if r == 0 {
-		return "", errors.New(COULD_NOT_DETECT_PACKAGE_ERROR_MESSAGE + ":\n" + dllError.Error())
+		return "", errors.New(ErrLangDetectFail + ":\n" + dllError.Error())
 	}
 
 	return windows.UTF16ToString(buffer), nil

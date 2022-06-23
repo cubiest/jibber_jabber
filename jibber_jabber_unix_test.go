@@ -3,6 +3,7 @@
 package jibberjabber_test
 
 import (
+	"errors"
 	"os"
 
 	. "github.com/cubiest/jibberjabber"
@@ -10,11 +11,6 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
-
-type parsedTag struct {
-	langID uint16
-	region uint16
-}
 
 var _ = Describe("Unix", func() {
 	AfterEach(func() {
@@ -46,7 +42,7 @@ var _ = Describe("Unix", func() {
 			It("should return an error if it cannot detect a locale", func() {
 				os.Setenv("LANG", "")
 				_, err := DetectIETF()
-				Ω(err.Error()).Should(Equal(COULD_NOT_DETECT_PACKAGE_ERROR_MESSAGE))
+				Ω(errors.Is(err, ErrLangDetectFail)).Should(BeTrue())
 			})
 		})
 
@@ -86,7 +82,7 @@ var _ = Describe("Unix", func() {
 			It("should return an error if it cannot detect a language", func() {
 				os.Setenv("LANG", "")
 				_, err := DetectLanguage()
-				Ω(err.Error()).Should(Equal(COULD_NOT_DETECT_PACKAGE_ERROR_MESSAGE))
+				Ω(errors.Is(err, ErrLangDetectFail)).Should(BeTrue())
 			})
 		})
 	})
@@ -123,7 +119,7 @@ var _ = Describe("Unix", func() {
 			It("should return an error if it cannot detect and parse a language tag", func() {
 				os.Setenv("LANG", "")
 				_, err := DetectLanguageTag()
-				Ω(err.Error()).Should(Equal(COULD_NOT_DETECT_PACKAGE_ERROR_MESSAGE))
+				Ω(errors.Is(err, ErrLangDetectFail)).Should(BeTrue())
 			})
 		})
 	})
@@ -151,7 +147,7 @@ var _ = Describe("Unix", func() {
 			It("should return an error if it cannot detect a territory", func() {
 				os.Setenv("LANG", "")
 				_, err := DetectTerritory()
-				Ω(err.Error()).Should(Equal(COULD_NOT_DETECT_PACKAGE_ERROR_MESSAGE))
+				Ω(errors.Is(err, ErrLangDetectFail)).Should(BeTrue())
 			})
 		})
 	})
