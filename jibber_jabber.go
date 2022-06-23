@@ -173,6 +173,26 @@ func (server *languageServer) ListSupportedLanguagesForDisplaySorted() []string 
 	return supportedLangs
 }
 
+// ListSupportedLanguagesSorted returns the language tags + their strings sorted alphabetically by string.
+// Use the elements for the first return value as key for the second return value.
+func (server *languageServer) ListSupportedLanguagesSorted() ([]string, map[string]language.Tag) {
+	languageServerMutex.Lock()
+	defer languageServerMutex.Unlock()
+
+	supportedLangs := make([]string, 0, len(server.supportedLanguages))
+	supportedLangTags := make(map[string]language.Tag)
+
+	for tag := range server.supportedLanguages {
+		name := display.Self.Name(tag)
+		supportedLangs = append(supportedLangs, name)
+		supportedLangTags[name] = tag
+	}
+
+	sort.Strings(supportedLangs)
+
+	return supportedLangs, supportedLangTags
+}
+
 // LanguageIsSupported returns true if the given BCP 47 string is in the list of supported languages.
 // Returns ErrLangParse, if any parsing issue occured.
 func (server *languageServer) LanguageIsSupported(bcp string) (bool, error) {
