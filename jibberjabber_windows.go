@@ -65,6 +65,7 @@ func DetectLanguageTag() (language.Tag, error) {
 	if err != nil {
 		return language.Und, err
 	}
+	locale, _ = splitLocale(locale)
 	return language.Parse(locale)
 }
 
