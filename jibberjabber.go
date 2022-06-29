@@ -2,6 +2,7 @@ package jibberjabber
 
 import (
 	"errors"
+	"fmt"
 	"sort"
 	"strings"
 	"sync"
@@ -93,11 +94,12 @@ func (server *languageServer) GetFallbackLanguage() language.Tag {
 // Returns ErrLangParse, if library cannot detect language or parse value given from your operating system.
 // Returns ErrLangFallbackUndefined, if fallback is undefined.
 // Returns ErrLangFallbackUnsupported, if fallaback is defined but unsupported.
+// If you want to check for jibberjabber errors, call `jibberjabber.IsError()`.
 func (server *languageServer) DetectSupportedLanguage() (language.Tag, error) {
 
 	tag, err := DetectLanguageTag()
 	if err != nil {
-		return language.Und, ErrLangParse
+		return language.Und, fmt.Errorf("%v: %w", ErrLangParse.Error(), err)
 	}
 
 	if server.LanguageTagIsSupported(tag) {
@@ -195,13 +197,14 @@ func (server *languageServer) ListSupportedLanguagesSorted() ([]string, map[stri
 
 // LanguageIsSupported returns true if the given BCP 47 string is in the list of supported languages.
 // Returns ErrLangParse, if any parsing issue occured.
+// If you want to check for jibberjabber errors, call `jibberjabber.IsError()`.
 func (server *languageServer) LanguageIsSupported(bcp string) (bool, error) {
 	languageServerMutex.Lock()
 	defer languageServerMutex.Unlock()
 
 	lang, parseErr := language.Parse(bcp)
 	if parseErr != nil {
-		return false, ErrLangParse
+		return false, fmt.Errorf("%v: %w", ErrLangParse.Error(), parseErr)
 	}
 
 	_, supported := server.supportedLanguages[lang]
@@ -221,19 +224,20 @@ func (server *languageServer) LanguageTagIsSupported(lang language.Tag) bool {
 
 // StringToLanguageTag returns language tag for given BCP 47 string.
 // Returns ErrLangParse, if parsing fails.
+// If you want to check for jibberjabber errors, call `jibberjabber.IsError()`.
 func (server *languageServer) StringToLanguageTag(bcp string) (language.Tag, error) {
 	languageServerMutex.Lock()
 	defer languageServerMutex.Unlock()
 
 	lang, parseErr := language.Parse(bcp)
 	if parseErr != nil {
-		return language.Und, ErrLangParse
+		return language.Und, fmt.Errorf("%v: %w", ErrLangParse.Error(), parseErr)
 	}
 	return lang, nil
 }
 
 // StringToSupportedLanguageTag returns language tag for given BCP 47 string.
-// Returns language tag or specified fallback.
+// Returns specified fallback, if language is not supported or parsing to language.Tag fails.
 // Returns ErrLangUnsupported, if language could be parsed, but is not supported.
 // Returns ErrLangFallbackUndefined, if ErrLangUnsupported and fallback is undefined.
 // Returns ErrLangFallbackUnsupported, if ErrLangUnsupported and fallaback is defined but unsupported.
@@ -308,4 +312,10 @@ func (server *languageServer) GetSupportedLanguageValueByTag(lang language.Tag) 
 	}
 
 	return value, err
+}
+
+// IsError checks an error you received from one of jibberjabber's funcs for a jibberjabber error like `ErrLangDetectFail`.
+// Reason you cannot use e.g. `errors.Is()`: currently, golang does not allow native chain-wrapping errors. Therefore, `errors.Unwrap()`, `errors.Is()` & Co. won't return `true` for jibberjabber errors.
+func IsError(err error, jjError error) bool {
+	return strings.HasPrefix(err.Error(), jjError.Error())
 }
